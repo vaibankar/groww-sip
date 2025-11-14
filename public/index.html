@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Groww-style SIP Calculator</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <style>
+    body { font-family: Inter, Arial, sans-serif; max-width: 760px; margin: 40px auto; padding: 0 16px; color: #111; }
+    h1 { font-size: 26px; margin-bottom: 10px; }
+    .card { border: 1px solid #e6e6e6; border-radius: 8px; padding: 18px; box-shadow: 0 6px 20px rgba(0,0,0,0.03); margin-bottom: 20px; }
+    label { display:block; margin-top:12px; font-weight:600; }
+    input[type="number"] { width:100%; padding:8px; margin-top:6px; border-radius:6px; border:1px solid #ddd; box-sizing:border-box; }
+    button { margin-top:14px; padding:10px 14px; border:none; border-radius:8px; background:#1f7aef; color:#fff; cursor:pointer; }
+    .result { margin-top:18px; font-size:16px; }
+    .muted { color:#666; font-size:13px; margin-top:6px; }
+    canvas { margin-top: 25px; }
+  </style>
+</head>
+<body>
+
+  <h1>Groww-style SIP Calculator</h1>
+
+  <div class="card">
+    <label>Monthly SIP amount (₹)</label>
+    <input id="monthly" type="number" value="5000"/>
+
+    <label>Expected annual return (%)</label>
+    <input id="annualRate" type="number" value="12"/>
+
+    <label>Investment horizon (years)</label>
+    <input id="years" type="number" value="10"/>
+
+    <button id="calc">Calculate</button>
+
+    <div class="result" id="output"></div>
+  </div>
+
+  <!-- Pie Chart -->
+  <div class="card">
+    <h2>Investment Breakdown</h2>
+    <canvas id="sipChart" height="150"></canvas>
+  </div>
+
+<script>
+  let chart;
+
+  function formatRupee(x) {
+    return '₹' + Number(x).toLocaleString('en-IN', { maximumFractionDigits: 0 });
+  }
+
+  function calcSIP(monthly, annualRate, years) {
+    const i = annualRate / 12 / 100;
+    const n = Math.round(years * 12);
+
+    if (i === 0) {
+      const fv = monthly * n;
+      return { futureValue: fv, invested: monthly * n, returns: fv - monthly * n };
+    }
+
+    const factor = Math.pow(1 + i, n);
+    const fv = monthly * ((factor - 1) / i);
+    const invested = monthly * n;
+    const returns = fv - invested;
+
+    return { futureValue: fv, invested, returns };
+  }
+
+  function updateChart(invested, returns, fv) {
+    const ctx = document.getElementById("sipChart").getContext("2d");
+
+    if (chart) chart.destroy();
+
+    chart = new Chart(ctx, {
+      type: "pie",
+      data: {
+        labels: ["Investment Amount", "Interest Earned", "Total Amount"],
+        datasets: [{
+          data: [invested, returns, fv],
+          backgroundColor: [
+            "rgba(54, 162, 235, 0.6)", 
+            "rgba(255, 206, 86, 0.6)", 
+            "rgba(75, 192, 192, 0.6)"
+          ]
+        }]
+      },
+      options: { responsive: true }
+    });
+  }
+
+  document.getElementById("calc").addEventListener("click", () => {
+    const monthly = parseFloat(document.getElementById("monthly").value);
+    const annualRate = parseFloat(document.getElementById("annualRate").value);
+    const years = parseFloat(document.getElementById("years").value);
+
+    const res = calcSIP(monthly, annualRate, years);
+    const invested = res.invested.toFixed(0);
+    const fv = res.futureValue.toFixed(0);
+    const returns = res.returns.toFixed(0);
+
+    document.getElementById("output").innerHTML = `
+      <div><strong>Future value:</strong> ${formatRupee(fv)}</div>
+      <div><strong>Total invested:</strong> ${formatRupee(invested)}</div>
+      <div><strong>Estimated returns:</strong> ${formatRupee(returns)}</div>
+    `;
+
+    updateChart(invested, returns, fv);
+  });
+
+  document.getElementById("calc").click();
+</script>
+
+</body>
+</html>
