@@ -7,40 +7,108 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
   <style>
-    body { font-family: Inter, Arial, sans-serif; max-width: 760px; margin: 40px auto; padding: 0 16px; color: #111; }
-    h1 { font-size: 26px; margin-bottom: 10px; }
-    .card { border: 1px solid #e6e6e6; border-radius: 8px; padding: 18px; box-shadow: 0 6px 20px rgba(0,0,0,0.03); margin-bottom: 20px; }
-    label { display:block; margin-top:12px; font-weight:600; }
-    input[type="number"] { width:100%; padding:8px; margin-top:6px; border-radius:6px; border:1px solid #ddd; box-sizing:border-box; }
-    button { margin-top:14px; padding:10px 14px; border:none; border-radius:8px; background:#1f7aef; color:#fff; cursor:pointer; }
-    .result { margin-top:18px; font-size:16px; }
-    .muted { color:#666; font-size:13px; margin-top:6px; }
-    canvas { margin-top: 25px; }
+    /* Luxury premium animated gradient background */
+    body {
+      font-family: Inter, Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+
+      background: linear-gradient(135deg, #0d47a1, #1976d2, #64b5f6, #bbdefb);
+      background-size: 500% 500%;
+      animation: bgAnimation 28s ease-in-out infinite;   /* SLOW PREMIUM */
+      color: #111;
+    }
+
+    /* Very slow smooth animation */
+    @keyframes bgAnimation {
+      0% { background-position: 0% 50%; }
+      25% { background-position: 100% 50%; }
+      50% { background-position: 100% 0%; }
+      75% { background-position: 0% 100%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    .container {
+      max-width: 760px;
+      margin: 40px auto;
+      padding: 0 16px;
+    }
+
+    /* Premium glass card */
+    .card {
+      border-radius: 18px;
+      padding: 20px;
+      margin-bottom: 25px;
+      backdrop-filter: blur(15px);
+      -webkit-backdrop-filter: blur(15px);
+      background: rgba(255, 255, 255, 0.20);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.20);
+    }
+
+    h1, h2 { color: #fff; font-weight: 700; }
+
+    label { 
+      display:block; 
+      margin-top:12px; 
+      font-weight:600; 
+      color:#fff; 
+    }
+
+    input[type="number"] {
+      width:100%;
+      padding:10px;
+      margin-top:6px;
+      border-radius:8px;
+      border:1px solid #d0d0d0;
+      font-size:15px;
+      box-sizing:border-box;
+    }
+
+    button {
+      margin-top:14px;
+      padding:12px 18px;
+      border:none;
+      border-radius:10px;
+      background:#0d47a1;
+      color:#fff;
+      cursor:pointer;
+      font-size:16px;
+      transition:0.3s;
+    }
+    button:hover {
+      background:#1565c0;
+    }
+
+    .result { margin-top:18px; font-size:16px; color:white; }
+
+    canvas { margin-top:20px; }
   </style>
 </head>
 <body>
 
-  <h1>Groww-style SIP Calculator</h1>
+  <div class="container">
+    <h1>Groww-style SIP Calculator</h1>
 
-  <div class="card">
-    <label>Monthly SIP amount (₹)</label>
-    <input id="monthly" type="number" value="5000"/>
+    <div class="card">
+      <label>Monthly SIP amount (₹)</label>
+      <input id="monthly" type="number" value="5000"/>
 
-    <label>Expected annual return (%)</label>
-    <input id="annualRate" type="number" value="12"/>
+      <label>Expected annual return (%)</label>
+      <input id="annualRate" type="number" value="12"/>
 
-    <label>Investment horizon (years)</label>
-    <input id="years" type="number" value="10"/>
+      <label>Investment horizon (years)</label>
+      <input id="years" type="number" value="10"/>
 
-    <button id="calc">Calculate</button>
+      <button id="calc">Calculate</button>
 
-    <div class="result" id="output"></div>
-  </div>
+      <div class="result" id="output"></div>
+    </div>
 
-  <!-- Pie Chart -->
-  <div class="card">
-    <h2>Investment Breakdown</h2>
-    <canvas id="sipChart" height="150"></canvas>
+    <div class="card">
+      <h2>Investment Breakdown</h2>
+      <canvas id="sipChart" height="150"></canvas>
+    </div>
   </div>
 
 <script>
@@ -79,10 +147,12 @@
         datasets: [{
           data: [invested, returns, fv],
           backgroundColor: [
-            "rgba(54, 162, 235, 0.6)", 
-            "rgba(255, 206, 86, 0.6)", 
-            "rgba(75, 192, 192, 0.6)"
-          ]
+            "rgba(54, 162, 235, 0.7)", 
+            "rgba(255, 206, 86, 0.7)", 
+            "rgba(75, 192, 192, 0.7)"
+          ],
+          borderColor: "#fff",
+          borderWidth: 2
         }]
       },
       options: { responsive: true }
